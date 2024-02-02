@@ -1,16 +1,28 @@
 body {
     padding-top: 20px;
     text-align: center;
+    background-color: wheat;
+    font-family: "Courier New";
+    font-weight: bold;
 }
 
+.main {
+    padding-top: 150px;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
 p {
     display: inline;
 }
 
+h1 {
+    padding-bottom: 30px;
+}
 .drop {
     width: 50px;
     height: 50px;
-    background-color: coral;
+    background-color: #DC143C;
     border-radius: 5px;
     display: inline-block;
     margin-right: 10px;
@@ -21,6 +33,11 @@ p {
     min-height: 50px;
 }
 
+.green {
+    background-color: #228B22	;
+}
+
+
 .match {
     width: 50px;
     height: 50px;
@@ -29,4 +46,18 @@ p {
     display: inline-block;
     margin-right: 10px;
     margin-bottom: 10px;
+}
+
+
+input[type=button]{
+    border-radius: 5px;
+    font-weight: bold;
+    width: 200px;
+    height: 30px;
+    margin-right: 10px;
+}
+
+#result {
+    margin-top: 20px;
+    margin-bottom: 20px;
 }

@@ -4,12 +4,13 @@ class Game {
         this._countryArray = word.split("");
     }
 
-    get word() {
-        return this._word;
-    }
+    get word() { return this._word; }
 
-    get countryArray() {
-        return this._countryArray;
+    get countryArray() { return this._countryArray; }
+
+    startGame() {
+        this.writeWord();
+        this.randLetters();
     }
 
     writeWord() {
@@ -36,9 +37,7 @@ class Game {
                 dropLetter.innerHTML = randLettersArray[i];
                 document.getElementById("letters").appendChild(dropLetter);
             }
-            console.log(randLettersArray);
-            console.log(this.countryArray);
-        }
+    }
 
     checkWin() {
         let matchedLetters = document.querySelectorAll('.match div');
@@ -50,45 +49,82 @@ class Game {
         });
 
         if (matchedWord === this.word) {
-            alert('Победа!');
             let startNewGame = document.createElement("input");
             let engGame = document.createElement("input");
             startNewGame.setAttribute("type", "button");
+            startNewGame.setAttribute("value", "Turpināt");
+            startNewGame.setAttribute("onclick", "continueGame()");
+
             engGame.setAttribute("type", "button");
-            startNewGame.setAttribute("value", "Продолжить?");
-            engGame.setAttribute("value", "Закончить?");
-            // Добавить обработчик событий на кнопки
+            engGame.setAttribute("value", "Beigt");
+            engGame.setAttribute("onclick", "endGame()");
 
             document.getElementById("choice").appendChild(startNewGame);
             document.getElementById("choice").appendChild(engGame);
 
+            let uzvara = document.querySelectorAll('#country .drop');
+            uzvara.forEach((div) => {
+                div.classList.add("green");
+            });
+
         } else if (matchedWord.length === this.word.length) {
             let lettersContainer = document.getElementById('letters');
-            matchedLetters.forEach(div => {
-                lettersContainer.appendChild(div);
+            matchedLetters.forEach((div, index) => {
+                if (matchedWord[index] != this.word[index]) {
+                    lettersContainer.appendChild(div);
+                }
             });
         }
     }
 }
 
-let newGame;
-fetch("countries.csv")
-    .then(function (response) {
-        return response.text();
-    })
+function newGameStart() {
+    startTime = Date.now();
+    continueGame();
+}
+function continueGame() {
+    clearScreen();
 
-    .then(function (data) {
-        let valsti = data.split("\n").slice(1);
-        rand = Math.floor(Math.random() * (valsti.length-1));
-        let randCountry = valsti[rand];
-        newGame = new Game(randCountry);
-        newGame.writeWord();
-        newGame.randLetters();
-    })
+    fetch("countries.csv")
+        .then(function (response) {
+            return response.text();
+        })
 
-    .catch(function (error) {
-        console.error("Kļūda: "+error);
-    });
+        .then(function (data) {
+            let countries = data.split("\n").slice(1);
+            rand = Math.floor(Math.random() * (countries.length));
+            let randCountry = countries[rand];
+            newGame = new Game(randCountry);
+            newGame.startGame();
+        })
+
+        .catch(function (error) {
+            console.error("Kļūda: "+error);
+        });
+}
+
+function endGame() {
+    clearScreen();
+
+    let endTime = Date.now();
+    const elapsedTime = endTime - startTime;
+
+    document.getElementById("result").innerHTML = `Paldies par spēli! <br> Tu spēlē pavadīji: ${formatTime(elapsedTime)}`;
+
+    let startNewGame = document.createElement("input");
+    startNewGame.setAttribute("type", "button");
+    startNewGame.setAttribute("value", "Sakt jaunu spēli");
+    startNewGame.setAttribute("onclick", "newGameStart()");
+    document.getElementById("choice").appendChild(startNewGame);
+}
+
+function clearScreen() {
+    document.getElementById("country").innerHTML = "";
+    document.getElementById("letters").innerHTML = "";
+    document.getElementById("choice").innerHTML = "";
+    document.getElementById("result").innerHTML = "";
+
+}
 
 document.ondragstart = function(event) {
     event.dataTransfer.setData("Text", event.target.id);
@@ -98,7 +134,6 @@ document.ondragover = function(event) {
     event.preventDefault();
 };
 
-let arr = [];
 document.ondrop = function(event) {
     event.preventDefault();
     let data = event.dataTransfer.getData("Text");
@@ -108,4 +143,19 @@ document.ondrop = function(event) {
         newGame.checkWin();
     }
 };
+
+function formatTime(milliseconds) {
+    const hours = Math.floor(milliseconds / (1000 * 60 * 60));
+    const minutes = Math.floor((milliseconds % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((milliseconds % (1000 * 60)) / 1000);
+
+    const formattedHours = hours < 10 ? "0" + hours : hours;
+    const formattedMinutes = minutes < 10 ? "0" + minutes : minutes;
+    const formattedSeconds = seconds < 10 ? "0" + seconds : seconds;
+
+    return `${formattedHours} stundas ${formattedMinutes} minūtes ${formattedSeconds} sekundes`;
+}
+
+let startTime;
+newGameStart();
 
