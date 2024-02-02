@@ -17,8 +17,6 @@ class Game {
             let field = document.createElement("div");
             field.setAttribute("class", "match");
             field.setAttribute("id", "div"+(i+1));
-            field.setAttribute("ondrop", "drop(event)");
-            field.setAttribute("ondragover", "allowDrop(event)");
             document.getElementById("country").appendChild(field);
         }
     }
@@ -31,31 +29,49 @@ class Game {
                 let rand = Math.floor(Math.random() * lettersArray.length);
                 randLettersArray[i] = lettersArray[rand];
                 lettersArray.splice(rand, 1);
-                let dropLetter = document.createElement("canvas");
+                let dropLetter = document.createElement("div");
+                dropLetter.setAttribute("class", "drop");
                 dropLetter.setAttribute("id", "drop"+(i+1));
                 dropLetter.setAttribute("draggable", "true" );
-                dropLetter.setAttribute("ondragstart", "drag(event)");
-                dropLetter.setAttribute("width", "50");
-                dropLetter.setAttribute("height", "50");
-                const ctx = dropLetter.getContext("2d");
-                ctx.font = "20px Arial";
-
-                const textMetrics = ctx.measureText(randLettersArray[i]);
-                const textWidth = textMetrics.width;
-                const textHeight = parseInt(ctx.font);
-
-                const x = (dropLetter.width - textWidth) / 2;
-                const y = (dropLetter.height + textHeight) / 2;
-
-                ctx.fillText(randLettersArray[i], x, y);
+                dropLetter.innerHTML = randLettersArray[i];
                 document.getElementById("letters").appendChild(dropLetter);
             }
             console.log(randLettersArray);
             console.log(this.countryArray);
-            console.log(this.word);
         }
+
+    checkWin() {
+        let matchedLetters = document.querySelectorAll('.match div');
+        let matchedWord = '';
+
+        matchedLetters.forEach(div => {
+            let text = div.textContent;
+            matchedWord += text;
+        });
+
+        if (matchedWord === this.word) {
+            alert('Победа!');
+            let startNewGame = document.createElement("input");
+            let engGame = document.createElement("input");
+            startNewGame.setAttribute("type", "button");
+            engGame.setAttribute("type", "button");
+            startNewGame.setAttribute("value", "Продолжить?");
+            engGame.setAttribute("value", "Закончить?");
+            // Добавить обробочик событий на кнопки
+
+            document.getElementById("choice").appendChild(startNewGame);
+            document.getElementById("choice").appendChild(engGame);
+
+        } else if (matchedWord.length === this.word.length) {
+            let lettersContainer = document.getElementById('letters');
+            matchedLetters.forEach(div => {
+                lettersContainer.appendChild(div);
+            });
+        }
+    }
 }
 
+let newGame;
 fetch("countries.csv")
     .then(function (response) {
         return response.text();
@@ -65,9 +81,8 @@ fetch("countries.csv")
         let valsti = data.split("\n").slice(1);
         rand = Math.floor(Math.random() * (valsti.length-1));
         let randCountry = valsti[rand];
-        const newGame = new Game(randCountry);
+        newGame = new Game(randCountry);
         newGame.writeWord();
-        console.log(newGame.word)
         newGame.randLetters();
     })
 
@@ -75,20 +90,22 @@ fetch("countries.csv")
         console.error("Kļūda: "+error);
     });
 
-function allowDrop(ev) {
-    ev.preventDefault();
-}
+document.ondragstart = function(event) {
+    event.dataTransfer.setData("Text", event.target.id);
+};
 
-function drag(ev) {
-    ev.dataTransfer.setData("text", ev.target.id);
-}
+document.ondragover = function(event) {
+    event.preventDefault();
+};
 
-function drop(ev) {
-    let data = ev.dataTransfer.getData("Text");
-    let targetElement = ev.target;
-
-    if (targetElement.classList.contains("match")) {
-        ev.preventDefault();
-        ev.target.appendChild(document.getElementById(data));
+let arr = [];
+document.ondrop = function(event) {
+    event.preventDefault();
+    let data = event.dataTransfer.getData("Text");
+    let target = event.target;
+    if (target.classList.contains("match")) {
+        event.target.appendChild(document.getElementById(data));
+        newGame.checkWin();
     }
-}
+};
+

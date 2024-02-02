@@ -7,12 +7,18 @@ p {
     display: inline;
 }
 
-canvas {
+.drop {
+    width: 50px;
+    height: 50px;
+    background-color: coral;
     border-radius: 5px;
     display: inline-block;
     margin-right: 10px;
+    margin-bottom: 10px;
+    line-height: 50px;
     text-align: center;
-    background-color: wheat;
+    font-size: 30px;
+    min-height: 50px;
 }
 
 .match {
