@@ -57,7 +57,7 @@ class Game {
             engGame.setAttribute("type", "button");
             startNewGame.setAttribute("value", "Продолжить?");
             engGame.setAttribute("value", "Закончить?");
-            // Добавить обробочик событий на кнопки
+            // Добавить обработчик событий на кнопки
 
             document.getElementById("choice").appendChild(startNewGame);
             document.getElementById("choice").appendChild(engGame);
