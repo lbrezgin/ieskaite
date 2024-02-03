@@ -12,6 +12,22 @@ body {
     align-items: center;
     height: 100vh;
 }
+
+#ruls {
+
+}
+ul {
+    background-color: antiquewhite;
+    width: 500px;
+    margin: auto;
+    border-radius: 10px;
+    padding: 20px;
+}
+
+li {
+    text-align: left;
+}
+
 p {
     display: inline;
 }
@@ -55,9 +71,16 @@ input[type=button]{
     width: 200px;
     height: 30px;
     margin-right: 10px;
+    margin-bottom: 20px;
+    margin-top: 20px;
 }
 
 #result {
     margin-top: 20px;
     margin-bottom: 20px;
+}
+
+#timeEnds {
+    font-size: large;
+    color: red;
 }

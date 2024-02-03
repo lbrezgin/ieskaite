@@ -49,6 +49,8 @@ class Game {
         });
 
         if (matchedWord === this.word) {
+            count++;
+
             let startNewGame = document.createElement("input");
             let engGame = document.createElement("input");
             startNewGame.setAttribute("type", "button");
@@ -78,7 +80,28 @@ class Game {
     }
 }
 
+function info() {
+    clearScreen();
+    document.getElementById("ruls").innerHTML = `
+        <h2>Spēles noteikumi:</h2>
+            <ul>
+                <li>Jums jāuzmin valsts!</li>
+                <li>Burti valsts nosaukumā ir sajaukti!</li>
+                <li>Velciet burtu uz vajadzīgo vietu!</li>
+                <li>Vārdā, burtus var pārkārtot!</li>
+                <li>Burti kas atrodisies uz nepareizām vietām, <br>automātiski atgriezīsies atpakaļ, <br> pēc visa vārda aizpildīšanas!</li>
+            </ul>
+            <div class="author">
+                <h2>Projeta izstrādatajs:</h2>
+                <p>Ļevs Brezgins</p>
+            </div>
+            <input type="button" value="Sākt spēli" onclick="newGameStart()">
+    `;
+}
+
+let startTime;
 function newGameStart() {
+    setTimeout(timeExpended, 180000);
     startTime = Date.now();
     continueGame();
 }
@@ -96,6 +119,7 @@ function continueGame() {
             let randCountry = countries[rand];
             newGame = new Game(randCountry);
             newGame.startGame();
+            console.log(newGame.word);
         })
 
         .catch(function (error) {
@@ -109,12 +133,11 @@ function endGame() {
     let endTime = Date.now();
     const elapsedTime = endTime - startTime;
 
-    document.getElementById("result").innerHTML = `Paldies par spēli! <br> Tu spēlē pavadīji: ${formatTime(elapsedTime)}`;
-
+    document.getElementById("result").innerHTML = `Paldies par spēli! <br> Tu spēlē pavadīji: ${formatTime(elapsedTime)}, un tava uzminēta valsta skaits ir: ${count} `;
     let startNewGame = document.createElement("input");
     startNewGame.setAttribute("type", "button");
     startNewGame.setAttribute("value", "Sakt jaunu spēli");
-    startNewGame.setAttribute("onclick", "newGameStart()");
+    startNewGame.setAttribute("onclick", "info()");
     document.getElementById("choice").appendChild(startNewGame);
 }
 
@@ -123,6 +146,9 @@ function clearScreen() {
     document.getElementById("letters").innerHTML = "";
     document.getElementById("choice").innerHTML = "";
     document.getElementById("result").innerHTML = "";
+    document.getElementById("ruls").innerHTML = "";
+    document.getElementById("result").innerHTML = "";
+    document.getElementById("timeEnds").innerHTML = "";
 
 }
 
@@ -156,6 +182,10 @@ function formatTime(milliseconds) {
     return `${formattedHours} stundas ${formattedMinutes} minūtes ${formattedSeconds} sekundes`;
 }
 
-let startTime;
-newGameStart();
+function timeExpended() {
+    endGame();
+    document.getElementById("timeEnds").innerHTML = "Diemžel laiks beidzas!";
+}
 
+let count = 0;
+info()
